@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0014c7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 400px;
+            background: rgb(255, 255, 255);
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(85, 233, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            border-bottom: 10px solid #33d602;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .user-input {
+            width: 80%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: transform 0.12s ease-in-out, box-shadow 3s ease-in-out;
+        }
+        .user-input:focus {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+            border-color: #33ff00;
+        }
+        button {
+            margin-top: 10px;
+            width: 50%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: scale(1.1);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+    
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    
+        
+</head>
+<body>
+    <div class="chat-container">
+        <h2>AI Chatbot</h2>
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="user-input" class="user-input" placeholder="Ask about AI...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userInput = document.getElementById("user-input").value;
+            let chatBox = document.getElementById("chat-box");
+            
+            if (userInput.trim() === "") return;
+            
+            chatBox.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+            document.getElementById("user-input").value = "";
+            
+            fetch("/chat", {
+                method: "POST",
+                body: new URLSearchParams({ message: userInput }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatBox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
